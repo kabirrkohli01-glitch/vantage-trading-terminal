@@ -1,0 +1,15 @@
+# Real records: transactions, the journal, cached market data, and the device
+# token that pairs the research assistant. None of it belongs in version
+# control, and the token in particular must never leave this machine.
+data/
+logs/
+
+# The Electron runtime, around 260MB, copied in by `node tools/launch.js
+# --adopt`. A build artefact borrowed from another project, not source.
+runtime/
+
+node_modules/
+*.log
+*.corrupt-*
+secrets.json
+*.env

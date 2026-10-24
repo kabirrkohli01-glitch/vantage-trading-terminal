@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <!-- The interface makes no network requests of any kind. Every figure it
+       shows arrived over the bridge from the main process, which is where all
+       fetching happens, so connect-src is closed entirely. The same policy is
+       applied at the session level in main/main.js.
+
+       Two directives allow the loopback origin from main/embeds.js: frames for
+       the embedded widgets, images for news artwork. The port is chosen by the
+       operating system at start-up and cannot be written here, so this copy
+       allows any port on the loopback address and the header main.js sends names
+       the one actually in use. A browser enforces every policy it is given, so
+       the pair together mean the exact port. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://127.0.0.1:*; font-src 'self'; connect-src 'none'; object-src 'none'; frame-src http://127.0.0.1:*; base-uri 'none'; form-action 'none'">
+  <title>Terminal</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true"><defs>
+  <symbol id="i-watchlist" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 4 5-8 4 5"/></symbol>
+  <symbol id="i-trade" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></symbol>
+  <symbol id="i-orders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+  <symbol id="i-positions" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/></symbol>
+  <symbol id="i-portfolio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-journal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h13a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H5a2 2 0 0 1 0-4h13"/><path d="M9 8h6"/></symbol>
+  <symbol id="i-news" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h6M7 13h10M7 16h7"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-alerts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-syrix" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 5.6L20 11l-5.6 2.4L12 19l-2.4-5.6L4 11l5.6-2.4z"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7.9 19l-.1.1A2 2 0 1 1 5 16.3l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 5 7.9L4.9 7.8A2 2 0 1 1 7.7 5l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1A2 2 0 1 1 20 7.7l-.1.1a1.6 1.6 0 0 0-1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.4v.6"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l-6 6 6 6M20 6l-6 6 6 6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></symbol>
+  <symbol id="i-close" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></symbol>
+  <symbol id="i-min" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M2 6h8"/></symbol>
+  <symbol id="i-max" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2.2" y="2.2" width="7.6" height="7.6" rx="1"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.5L6 8l3.5-3.5"/></symbol>
+  <symbol id="i-detach" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-8 8"/><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6.1L12 17.3 6.7 20.2l1.1-6.1L3.4 9.9l6-.8z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="7" width="10" height="10" rx="2"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></symbol>
+  <symbol id="i-candle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M8 3v4M8 17v4M16 2v5M16 15v7"/><rect x="5" y="7" width="6" height="10" rx="1"/><rect x="13" y="7" width="6" height="8" rx="1"/></symbol>
+  <symbol id="i-indicator" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15l4-6 4 4 4-8 6 10"/></symbol>
+  <symbol id="i-layout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="7" height="7" rx="1"/><rect x="14" y="4" width="7" height="7" rx="1"/><rect x="3" y="13" width="7" height="7" rx="1"/><rect x="14" y="13" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6L5 12l6 6M20 6l-6 6 6 6"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7L4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-2"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7l5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h2"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.5-1.1-.3-.3-.4-.6-.4-1 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.7-9-7.7z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10.5" cy="7.5" r="1"/><circle cx="15" cy="8.5" r="1"/></symbol>
+  <symbol id="i-sources" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></symbol>
+  <symbol id="i-heat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="8" height="11" rx="1"/><rect x="13" y="3" width="8" height="6" rx="1"/><rect x="13" y="11" width="8" height="10" rx="1"/><rect x="3" y="16" width="8" height="5" rx="1"/></symbol>
+  <symbol id="i-profile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V4M16 19v-7M22 19H2"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></symbol>
+  <symbol id="i-attach" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.6 4.6 0 0 1-6.5-6.5L13 4.5a3.1 3.1 0 0 1 4.4 4.4L9 17.3a1.5 1.5 0 0 1-2.2-2.2L15 7"/></symbol>
+
+  <symbol id="t-cursor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></symbol>
+  <symbol id="t-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 19L20 5"/><circle cx="4" cy="19" r="1.8"/><circle cx="20" cy="5" r="1.8"/></symbol>
+  <symbol id="t-ray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 19L21 6"/><circle cx="4" cy="19" r="1.8"/><path d="M17 6h4v4"/></symbol>
+  <symbol id="t-horizontal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 12h18"/><circle cx="12" cy="12" r="1.8"/></symbol>
+  <symbol id="t-vertical" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 3v18"/><circle cx="12" cy="12" r="1.8"/></symbol>
+  <symbol id="t-channel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 16L18 4M6 20L21 8"/></symbol>
+  <symbol id="t-pitchfork" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 20L13 8M13 8h7M10 13h7M16 3h5"/></symbol>
+  <symbol id="t-rect" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="4" y="6" width="16" height="12" rx="1"/></symbol>
+  <symbol id="t-ellipse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="12" rx="9" ry="6"/></symbol>
+  <symbol id="t-fib" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M3 5h18M3 10h18M3 14h18M3 19h18"/></symbol>
+  <symbol id="t-measure" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5M5 5h14M19 5v14"/><path d="M8 8l8 8"/></symbol>
+  <symbol id="t-position" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/></symbol>
+  <symbol id="t-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20L20 4"/><path d="M13 4h7v7"/></symbol>
+  <symbol id="t-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 6h14M12 6v13"/></symbol>
+  <symbol id="t-magnet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v8a6 6 0 0 0 12 0V4"/><path d="M6 9h4M14 9h4"/></symbol>
+  <symbol id="t-clear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 13h10l1-13"/></symbol>
+</defs></svg>
+
+<div id="shell">
+
+  <!-- ============================ top bar ============================ -->
+  <header id="topbar">
+    <div class="brand">
+      <img src="assets/vantage-64.png" alt="">
+      <span class="name" id="brand-name"></span>
+    </div>
+
+    <div class="search">
+      <svg class="glass"><use href="#i-search"></use></svg>
+      <input id="search-input" type="text" spellcheck="false" autocomplete="off"
+             placeholder="Search markets, instruments, news…">
+      <kbd>/</kbd>
+      <div class="results" id="search-results" hidden></div>
+    </div>
+
+    <!-- The chart's own controls live in the title bar, as they do in the
+         reference, rather than in a second strip underneath it. They are hidden
+         on screens that have no chart. -->
+    <div class="chart-tools" id="chart-tools">
+      <span class="tb-sep"></span>
+      <div class="tf-strip" id="tf-strip"></div>
+      <span class="tb-sep"></span>
+      <div class="tool-group" id="chart-bar"></div>
+    </div>
+
+    <span class="tb-spacer"></span>
+
+    <div class="topbar-right">
+      <span class="badge bare" id="global-state" data-state="UNKNOWN" title="The worst data state among everything on screen">
+        <span class="dot"></span><span class="txt">Starting</span>
+      </span>
+      <button class="btn trade-btn" data-act="toggle-trade-panel" title="Open the order panel">
+        <svg><use href="#i-trade"></use></svg>Trade</button>
+      <button class="icon-btn" data-act="syx-dock" title="Keep SYRIX beside the work"><svg><use href="#i-syrix"></use></svg></button>
+      <button class="icon-btn has-badge" data-act="view" data-view="alerts" title="Alerts">
+        <svg><use href="#i-alerts"></use></svg><span class="badge-dot" id="alert-badge" hidden></span>
+      </button>
+      <button class="avatar" data-act="view" data-view="settings" title="Settings">K</button>
+      <div class="win-controls">
+        <button class="win-btn" data-act="win-min" title="Minimise"><svg><use href="#i-min"></use></svg></button>
+        <button class="win-btn" data-act="win-max" title="Maximise"><svg><use href="#i-max"></use></svg></button>
+        <button class="win-btn close" data-act="win-close" title="Close"><svg><use href="#i-close"></use></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <div id="body">
+    <!-- ============================ left rail ============================ -->
+    <!-- Trade, Orders and Positions are not here. They are not places to go —
+         they are the blotter and the ticket, which sit under the chart where
+         the price they refer to is. Watchlist is not here either, for the same
+         reason: it is the right-hand column beside the chart, always on
+         screen there, with its own switcher to move between lists. A rail
+         entry that only switches to a panel already on screen is a rail entry
+         that teaches nothing. -->
+    <nav id="rail">
+      <button class="rail-btn on" data-act="view" data-view="chart"><svg><use href="#i-chart"></use></svg><span>Chart</span></button>
+      <button class="rail-btn" data-act="view" data-view="discover"><svg><use href="#i-heat"></use></svg><span>Discover</span></button>
+      <button class="rail-btn" data-act="view" data-view="news"><svg><use href="#i-news"></use></svg><span>News</span></button>
+      <button class="rail-btn" data-act="view" data-view="syrix"><svg><use href="#i-syrix"></use></svg><span>SYRIX</span></button>
+      <button class="rail-btn" data-act="view" data-view="portfolio"><svg><use href="#i-portfolio"></use></svg><span>Portfolio</span></button>
+      <button class="rail-btn" data-act="view" data-view="profile"><svg><use href="#i-profile"></use></svg><span>Performance</span></button>
+      <button class="rail-btn" data-act="view" data-view="journal"><svg><use href="#i-journal"></use></svg><span>Journal</span></button>
+      <button class="rail-btn" data-act="view" data-view="alerts"><svg><use href="#i-alerts"></use></svg><span>Alerts</span></button>
+      <div class="rail-gap"></div>
+      <button class="rail-btn" data-act="view" data-view="settings"><svg><use href="#i-settings"></use></svg><span>Settings</span></button>
+      <button class="rail-btn" data-act="collapse-rail"><svg><use href="#i-collapse"></use></svg><span>Collapse</span></button>
+    </nav>
+
+    <!-- ============================ stage ============================ -->
+    <main id="stage">
+      <div id="safemode">
+        <span class="label">Safe data mode</span>
+        <span class="why"></span>
+        <span class="withheld"></span>
+      </div>
+
+      <!-- ---------------------- the chart workspace ---------------------- -->
+      <section class="view workspace on" data-view="chart">
+
+        <div class="ws-main">
+          <!-- instrument header -->
+          <div class="inst-bar" id="inst-bar">
+            <div class="loading">Loading instrument…</div>
+          </div>
+
+          <!-- chart + drawing rail -->
+          <div class="chart-area">
+            <nav id="draw-rail">
+              <button class="draw-btn on" data-act="tool" data-tool="cursor" title="Cross"><svg><use href="#t-cursor"></use></svg><span class="tip">Cross</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="trend" title="Trend line"><svg><use href="#t-trend"></use></svg><span class="tip">Trend line</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="ray" title="Ray"><svg><use href="#t-ray"></use></svg><span class="tip">Ray</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="horizontal" title="Horizontal line"><svg><use href="#t-horizontal"></use></svg><span class="tip">Horizontal line</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="vertical" title="Vertical line"><svg><use href="#t-vertical"></use></svg><span class="tip">Vertical line</span></button>
+              <div class="draw-sep"></div>
+              <button class="draw-btn" data-act="tool" data-tool="channel" title="Parallel channel"><svg><use href="#t-channel"></use></svg><span class="tip">Parallel channel</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="pitchfork" title="Pitchfork"><svg><use href="#t-pitchfork"></use></svg><span class="tip">Pitchfork</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="fib" title="Fibonacci retracement"><svg><use href="#t-fib"></use></svg><span class="tip">Fibonacci retracement</span></button>
+              <div class="draw-sep"></div>
+              <button class="draw-btn" data-act="tool" data-tool="rectangle" title="Rectangle"><svg><use href="#t-rect"></use></svg><span class="tip">Rectangle</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="ellipse" title="Ellipse"><svg><use href="#t-ellipse"></use></svg><span class="tip">Ellipse</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="arrow" title="Arrow"><svg><use href="#t-arrow"></use></svg><span class="tip">Arrow</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="text" title="Text"><svg><use href="#t-text"></use></svg><span class="tip">Text</span></button>
+              <div class="draw-sep"></div>
+              <button class="draw-btn" data-act="magnet" title="Magnet — snap to the nearest open, high, low or close"><svg><use href="#t-magnet"></use></svg><span class="tip">Magnet — snap to open, high, low or close</span></button>
+              <div class="draw-sep"></div>
+              <button class="draw-btn" data-act="tool" data-tool="measure" title="Measure"><svg><use href="#t-measure"></use></svg><span class="tip">Measure</span></button>
+              <button class="draw-btn" data-act="tool" data-tool="position" title="Position — entry, stop and target"><svg><use href="#t-position"></use></svg><span class="tip">Position</span></button>
+              <div class="rail-gap"></div>
+              <button class="draw-btn" data-act="clear-drawings" title="Remove all drawings"><svg><use href="#t-clear"></use></svg><span class="tip">Remove all drawings</span></button>
+            </nav>
+
+            <div class="chart-wrap" id="chart-wrap">
+              <div class="legend" id="legend"></div>
+
+              <!-- The vendor's own chart, in a frame of its own on the loopback
+                   origin. It sits INSIDE the chart box rather than beside it: a
+                   third child of .chart-area would have been a third child of a
+                   two-track grid, and a grid with more children than tracks does
+                   not error — it invents a track and shifts everything.
+                   Only one of the two surfaces is on screen at a time, and the
+                   other is destroyed rather than hidden, because a canvas nobody
+                   is looking at still repaints on every quote. -->
+              <div class="vendor-chart embed-holder" id="vendor-chart" data-embed="chart" hidden></div>
+            </div>
+          </div>
+
+          <!-- range strip -->
+          <div class="range-bar" id="range-bar"></div>
+
+          <!-- drag the top edge of the bottom panel -->
+          <div class="splitter h" data-resize="bottom" role="separator" aria-orientation="horizontal"
+               aria-label="Resize the bottom panel" tabindex="0"></div>
+
+          <!-- bottom panel -->
+          <div class="bottom-panel" id="bottom-panel">
+            <div class="bp-left">
+              <div class="bp-tabs" id="bp-tabs">
+                <button class="bp-tab on" data-act="bp" data-tab="positions">Positions</button>
+                <button class="bp-tab" data-act="bp" data-tab="orders">Orders</button>
+                <button class="bp-tab" data-act="bp" data-tab="history">History</button>
+                <button class="bp-tab" data-act="bp" data-tab="trades">Trades</button>
+                <button class="bp-tab" data-act="bp" data-tab="account">Account summary</button>
+                <span class="tb-spacer"></span>
+                <span class="book-pill" id="bp-book">Paper</span>
+                <div class="panel-controls">
+                  <button class="panel-btn" data-act="bp-collapse" title="Collapse to the tabs"><svg><use href="#i-chevron-down"></use></svg></button>
+                  <button class="panel-btn" data-act="bp-maximise" title="Maximise the panel"><svg><use href="#i-max"></use></svg></button>
+                  <button class="panel-btn" data-act="toggle-bottom" title="Close the panel"><svg><use href="#i-close"></use></svg></button>
+                </div>
+              </div>
+              <div class="bp-body" id="bp-body"><div class="loading">Loading…</div></div>
+              <div class="bp-status" id="bp-status"></div>
+            </div>
+
+            <!-- drag the edge between the blotter and the ticket -->
+            <div class="splitter v" data-resize="ticket" role="separator" aria-orientation="vertical"
+                 aria-label="Resize the order ticket" tabindex="0"></div>
+
+            <div class="bp-right">
+              <div class="bp-tabs">
+                <button class="bp-tab on" data-act="ticket-tab" data-tab="trade">Trade</button>
+                <button class="bp-tab" data-act="ticket-tab" data-tab="order">Order</button>
+              </div>
+              <div class="ticket" id="ticket"><div class="loading">Loading…</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- The order panel docks between the chart and the watchlist, as it
+             does in the reference, rather than floating over either. -->
+        <aside class="trade-panel" id="trade-panel">
+          <div class="side-head">
+            <span class="side-title" id="trade-panel-symbol">Order</span>
+            <span class="tb-spacer"></span>
+            <button class="panel-btn" data-act="toggle-trade-panel" title="Close the order panel"><svg><use href="#i-close"></use></svg></button>
+          </div>
+          <div class="ticket" id="trade-panel-body"><div class="loading">Loading…</div></div>
+        </aside>
+
+        <!-- drag the edge between the chart and the right column -->
+        <div class="splitter v" data-resize="side" role="separator" aria-orientation="vertical"
+             aria-label="Resize the right column" tabindex="0"></div>
+
+        <!-- right column -->
+        <aside class="ws-side" id="ws-side">
+          <div class="side-block" id="wl-block">
+            <div class="side-head">
+              <button class="side-title" data-act="menu" data-menu="watchlist">Watchlist <span class="caret">▾</span></button>
+              <span class="tb-spacer"></span>
+              <button class="icon-btn sm" data-act="add-to-watchlist" title="Add the instrument on screen"><svg><use href="#i-plus"></use></svg></button>
+              <button class="icon-btn sm" data-act="detach" data-panel="watchlist" title="Open on another monitor"><svg><use href="#i-detach"></use></svg></button>
+              <button class="panel-btn" data-act="block-collapse" data-block="wl-block" title="Collapse"><svg><use href="#i-chevron-down"></use></svg></button>
+            </div>
+            <div class="wl-head"><span>Symbol</span><span>Last</span><span>Chg</span><span>Chg%</span></div>
+            <div class="wl-scroll" id="wl-rows"></div>
+          </div>
+
+          <!-- drag the edge between the watchlist and the detail block -->
+          <div class="splitter h" data-resize="watchlist" role="separator" aria-orientation="horizontal"
+               aria-label="Resize the watchlist" tabindex="0"></div>
+
+          <div class="side-block grow" id="detail-block">
+            <div class="side-head">
+              <div class="side-tabs" id="detail-tabs"></div>
+              <span class="tb-spacer"></span>
+              <button class="panel-btn" data-act="toggle-side" title="Close the column"><svg><use href="#i-close"></use></svg></button>
+            </div>
+            <div class="detail-fixed" id="detail-head"></div>
+            <div class="side-scroll" id="detail-body"><div class="loading">Loading…</div></div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- ---------------------- other screens ---------------------- -->
+      <section class="view screen" data-view="portfolio">
+        <div class="screen-bar">
+          <span class="screen-title">Portfolio</span>
+          <div class="book-tabs" id="pf-books"></div>
+          <span class="tb-spacer"></span>
+          <button class="btn" data-act="add-transaction">Add a transaction</button>
+          <button class="icon-btn" data-act="refresh-portfolio" title="Reprice"><svg><use href="#i-refresh"></use></svg></button>
+        </div>
+        <div class="caveat" id="pf-caveat"><span class="mark"></span><span class="t"></span></div>
+        <div class="screen-body" id="pf-body"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="view screen" data-view="journal">
+        <div class="screen-bar">
+          <span class="screen-title">Journal</span>
+          <div class="book-tabs" id="jn-books"></div>
+          <span class="tb-spacer"></span>
+          <span class="muted" id="jn-count"></span>
+        </div>
+        <div class="screen-body" id="jn-body"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="view screen" data-view="alerts">
+        <div class="screen-bar">
+          <span class="screen-title">Alerts</span>
+          <span class="tb-spacer"></span>
+          <button class="btn" data-act="add-alert">New alert</button>
+        </div>
+        <div class="screen-body" id="alerts-body"><div class="loading">Loading…</div></div>
+      </section>
+
+      <!-- Both of these draw their own markup: web/newsroom.js and
+           web/discover.js. Nothing is fetched for a screen nobody has opened. -->
+      <section class="view screen" data-view="news"></section>
+      <section class="view screen" data-view="discover"></section>
+      <section class="view screen" data-view="profile"></section>
+
+      <!-- ---------------------- research ----------------------
+           The full-screen assistant. The dock at the right edge of the shell is
+           the same conversation in a second container; neither is a copy of the
+           other. There is no product mark here on purpose: a logo above every
+           conversation is a logo in the way of the conversation. -->
+      <section class="view chat" data-view="syrix">
+        <aside class="chat-sidebar" data-syrix-sidebar>
+          <button class="chat-sidebar-new" data-act="syx-new">
+            <svg><use href="#i-plus"></use></svg>New chat</button>
+          <div class="chat-sidebar-list" data-syrix-conversations></div>
+        </aside>
+        <div class="chat-wrap">
+          <div class="chat-head">
+            <span class="chat-head-mark"><svg><use href="#i-syrix"></use></svg></span>
+            <span class="screen-title">SYRIX</span>
+            <span class="badge" id="syrix-state" data-state="UNKNOWN"><span class="dot"></span><span class="txt">Checking</span></span>
+            <span class="tb-spacer"></span>
+            <button class="ghost-btn" data-act="syx-dock" title="Keep it beside the work instead">Dock it</button>
+          </div>
+          <div data-syrix-pair></div>
+          <div class="chat-log" data-syrix-log></div>
+          <div class="syx-composer-host" data-composer="screen"></div>
+          <div data-syrix-suggest></div>
+        </div>
+      </section>
+
+      <!-- ---------------------- settings ---------------------- -->
+      <section class="view screen" data-view="settings">
+        <div class="screen-bar"><span class="screen-title">Settings</span></div>
+        <div class="screen-body">
+          <div class="settings-page">
+            <div class="about">
+              <img src="assets/vantage-128.png" alt="">
+              <div class="who">
+                <div class="nm" id="about-name"></div>
+                <div class="by">Made by <strong id="about-author"></strong></div>
+                <div class="meta" id="about-meta"></div>
+              </div>
+            </div>
+
+            <div class="section-label">Appearance</div>
+            <div class="setting">
+              <div>
+                <div class="label">Theme</div>
+                <div class="hint">The palette is taken from the application mark.</div>
+              </div>
+              <div class="seg">
+                <button data-act="theme" data-mode="dark">Dark</button>
+                <button data-act="theme" data-mode="light">Light</button>
+              </div>
+            </div>
+
+            <div class="section-label">Chart colours</div>
+            <div class="hint" style="padding:0 0 10px">The same colours as the chart's own toolbar — a change
+              here applies the moment either chart is next drawn.</div>
+            <div id="settings-appearance" data-appearance-host></div>
+
+            <div class="section-label">Research assistant</div>
+            <div class="setting">
+              <div>
+                <div class="label">How deeply SYRIX works</div>
+                <div class="hint">The default for a new question, from any surface.</div>
+              </div>
+            </div>
+            <div id="settings-depth"></div>
+            <div id="settings-syrix"></div>
+
+            <div class="section-label">Data</div>
+            <div id="settings-health"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------------- modal ---------------------- -->
+      <div class="modal-back" id="modal-back">
+        <div class="modal">
+          <div class="modal-head">
+            <span class="modal-title" id="modal-title"></span>
+            <span class="tb-spacer"></span>
+            <button class="icon-btn" data-act="close-modal"><svg><use href="#i-close"></use></svg></button>
+          </div>
+          <div class="modal-body" id="modal-body"></div>
+          <div class="modal-foot" id="modal-foot"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============================ the assistant, docked ============================
+         Beside the work rather than instead of it: the operator asked for it to
+         be reachable without leaving the chart. Its edge is a drag handle like
+         every other panel, and whether it is open persists. -->
+    <div class="splitter v" data-resize="syrix" role="separator" aria-orientation="vertical"
+         aria-label="Resize the assistant" tabindex="0"></div>
+
+    <aside id="syrix-dock" hidden>
+      <div class="syx-head">
+        <span class="syx-title">SYRIX</span>
+        <span class="badge bare" id="syrix-dock-state" data-state="UNKNOWN"><span class="dot"></span></span>
+        <span class="tb-spacer"></span>
+        <button class="panel-btn" data-act="syx-new" title="Start a new conversation">
+          <svg><use href="#i-plus"></use></svg></button>
+        <button class="panel-btn" data-act="syx-dock" title="Close the panel">
+          <svg><use href="#i-close"></use></svg></button>
+      </div>
+      <div data-syrix-pair></div>
+      <div class="syx-log" data-syrix-log></div>
+      <div class="syx-composer-host" data-composer="dock"></div>
+    </aside>
+  </div>
+
+  <!-- ============================ status bar ============================ -->
+  <footer id="statusbar">
+    <span class="mkt" id="mkt-state"></span>
+    <span id="clocks"></span>
+    <span class="sep"></span>
+    <span id="status-market">—</span>
+    <span class="sep"></span>
+    <span id="status-net">—</span>
+    <span class="status-spacer"></span>
+    <button class="stale-bar" id="stale-bar" data-act="reload-window" hidden>
+      A newer build is on disk — click to reload</button>
+    <span class="sep"></span>
+    <span id="build-stamp" title="When the code this window is running was last changed"></span>
+    <span class="sep"></span>
+    <span id="made-by"></span>
+    <span class="sep"></span>
+    <span id="credit"></span>
+  </footer>
+
+</div>
+
+<!-- Shared with the main process rather than reimplemented for the browser, so
+     the price in a header, the label on a chart axis and the figure in a report
+     all come from the same code and cannot disagree. -->
+<script src="../src/core/num.js"></script>
+<script src="../src/core/clock.js"></script>
+<script src="../src/market/candles.js"></script>
+<script src="../src/analysis/indicators.js"></script>
+
+<script src="chart/engine.js"></script>
+<script src="chart/drawings.js"></script>
+<script src="markdown.js"></script>
+<script src="embeds.js"></script>
+<script src="screens.js"></script>
+<script src="research.js"></script>
+<script src="newsroom.js"></script>
+<script src="discover.js"></script>
+<script src="dashboard.js"></script>
+<script src="syrix.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
