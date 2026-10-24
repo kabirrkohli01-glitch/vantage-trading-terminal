@@ -84,6 +84,10 @@ The assistant pairs once with `node tools/pair-syrix.js <pairing-code>` and stor
 
 A personal project, in active development. Paper trading only — it places no real orders.
 
+## Development history
+
+Developed in a private repository — 22 commits, August 2026 — and published here as a curated snapshot. The working history stays private because it contains local configuration from development.
+
 ---
 
 © 2026 Kabirr Kohli. All rights reserved. Published for viewing; no licence is granted to copy, modify or redistribute.
